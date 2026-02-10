@@ -73,20 +73,24 @@ def movimineto_valido(mov, gat_o_rat): #Corroborar si se puede mover a donde se 
         else:
             return False
 
-def mover_ficha(mov, gat_o_rat): #Funcion todavia no funcion
+def mover_ficha(mov, gat_o_rat): #Funcion funciona mal
     if gat_o_rat == 1:
         pos = pos_gato
     else:
         pos = pos_raton
     
     if mov == "w":
-        pass
+        tablero[pos[0]][pos[1]] = 0
+        tablero[pos[0]-1][pos[1]] = gat_o_rat   
     if mov == "s":
-        pass
+        tablero[pos[0]][pos[1]] = 0
+        tablero[pos[0]+1][pos[1]] = gat_o_rat   
     if mov == "d":
-        pass
+        tablero[pos[0]][pos[1]] = 0
+        tablero[pos[0]][pos[1]+1] = gat_o_rat
     if mov == "a": 
-        pass
+        tablero[pos[0]][pos[1]] = 0
+        tablero[pos[0]][pos[1]-1] = gat_o_rat   
     
 def corroborar_fin():
     pass
