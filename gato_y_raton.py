@@ -80,10 +80,13 @@ def mover_ficha(mov, gat_o_rat): #Funcion todavia no funcion
         pos = pos_raton
     
     if mov == "w":
-
+        pass
     if mov == "s":
+        pass
     if mov == "d":
+        pass
     if mov == "a": 
+        pass
     
 def corroborar_fin():
     pass
