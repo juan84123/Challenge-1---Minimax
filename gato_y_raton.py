@@ -1,32 +1,31 @@
 import random
-tamano_x = 20
-tamano_y = 20
-tablero = []
+tamano_x = 5    #tamano i de la matriz 
+tamano_y = 5    #tamano j de la matriz
 cant_turno = 5 #Para finalizar el juego
-pos_gato = []
-pos_raton = []
-#necesito guardar la posicion del gato y del raton en todo momento
+tablero = [] #tablero de juego
+pos_gato = [] #posicion del gato
+pos_raton = [] #posicion del raton
 
-def crear_tablero():
+def crear_tablero(): #funcion que crea el tablero y lo llena de 0
    for fila in range(tamano_x):
        fila = []
        for columna in range(tamano_y):
            fila.append(0)
        tablero.append(fila)
 
-def imprimir_tablero():
+def imprimir_tablero(): #funcion para imprimir el tablero, mas adelante, ver de imprimir con letras, o si es conveniente usar nomas letra
     for i in tablero:
        print(f"{i}\n")
 
 def colocar_personaje(personaje): #Posibles problemas, si el random hace que esten my cerca
-    f = random.randint(0, tamano_x - 1)
-    c = random.randint(0, tamano_y - 1)
-    while tablero[f][c] != personaje:
-        f = random.randint(0, tamano_x - 1)
-        c = random.randint(0, tamano_y - 1)
-        if tablero[f][c] == 0:
-            tablero[f][c] = personaje
-    return f,c
+    i = random.randint(0, tamano_x - 1) #genera un valor random para el eje x
+    j = random.randint(0, tamano_y - 1) #genera un valor random para el eje y
+    while tablero[i][j] != personaje: #si el valor en la matriz con los valores random son iguales
+        i = random.randint(0, tamano_x - 1)
+        j = random.randint(0, tamano_y - 1)
+        if tablero[i][j] == 0:
+            tablero[i][j] = personaje
+    return i,j   #retorna lo las posiciones
 
 crear_tablero()
 
@@ -55,41 +54,37 @@ def movimineto_valido(mov, gat_o_rat): #Corroborar si se puede mover a donde se 
 
     if mov == "w":
         if (pos[0]-1) >= 0: #pos[0]-1 >= 0, se toma este valor para corroborar que no desborde por arriba
-            print("TRUE", pos)
             return True
         else:
-            print("FALSE")
             return False
     elif mov == "s":
         if (pos[0] + 1) < tamano_x: #pos[0] + 1 <= tamano_x, para que no desborde por abajo 
-            print("TRUE", pos)
             return True
         else:
-            print("FALSE")
             return False
     elif mov == "d":
         if (pos[1]+1) < tamano_y: #pos[1]+1 <= tamano_y, para que no desborde por la derecha
-            print("TRUE")
             return True
         else:
-            print("FALSE")
             return False
     elif mov == "a":
         if (pos[1]-1) >= 0: #pos[1]-1 <= 0, para que no desborde por la izquierda
-            print("TRUE")
             return True
         else:
-            print("FALSE")
             return False
 
 def mover_ficha(mov, gat_o_rat): #Funcion todavia no funcion
     if gat_o_rat == 1:
-        tablero[pos_gato[0]][pos_gato[1]]
-       
-    elif gat_o_rat == 2: # Raton
-        tablero[pos_raton[0]][pos_raton[1]]
-    pass
+        pos = pos_gato
+    else:
+        pos = pos_raton
+    
+    if mov == "w":
 
+    if mov == "s":
+    if mov == "d":
+    if mov == "a": 
+    
 def corroborar_fin():
     pass
 
