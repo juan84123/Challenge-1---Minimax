@@ -113,8 +113,17 @@ def mover_ficha(mov, elecc_humano):
         pos_raton[1] = j
 
 
+#Corrobora el fin de juego, lo que falta es que cant_turnos disminuya, cada jugada
 def corroborar_fin():
-    pass
+    if  cant_turno == 0:
+        print("El RATON se escapo")
+        return True
+    elif pos_gato == pos_raton:
+        #tablero[pos_gato[0]][pos_gato[0]] = "G"
+        print("El GATO comio al raton")        
+        return True
+    else:
+        return False
 
 print("Juego del gato y raton")
 pos_gato = colocar_personaje(1)
