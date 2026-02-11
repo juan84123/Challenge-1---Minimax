@@ -28,8 +28,8 @@ def imprimir_tablero_estetico():
     for i in tablero:
         for j in i:
             if j == 0: print(" "," \u00B7 ",end="")
-            elif j == 1: print(" ","🐱",end="") #al poner los emojis la matriz cambia, y ya no es estetica
-            else: print(" ","🐭",end="")
+            elif j == 1: print(" ","G",end="") #al poner los emojis la matriz cambia, y ya no es estetica
+            else: print(" ","R",end="")
         print(" ")
             #if fila == 0: print(".")
    
