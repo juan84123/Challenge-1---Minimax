@@ -6,14 +6,20 @@ tablero = [] #tablero de juego
 pos_gato = [] #posicion del gato
 pos_raton = [] #posicion del raton
 
-def crear_tablero(): #funcion que crea el tablero y lo llena de 0
-   for fila in range(tamano_x):
-       fila = []
-       for columna in range(tamano_y):
-           fila.append(0)
-       tablero.append(fila)
+#funcion que crea el tablero y lo llena de 0
+def crear_tablero():
+    for fila in range(tamano_x):
+       fila = [] # Se crea una lista (fila) vacia
+       for columna in range(tamano_y):  
+           fila.append(0) # Se meten los 0 en la fila 1 por 1
+       tablero.append(fila) # Se agrega la fila a la matriz
 
-def imprimir_tablero(): #funcion para imprimir el tablero, mas adelante, ver de imprimir con letras, o si es conveniente usar nomas letra
+#funcion para imprimir el tablero, mas adelante, ver de imprimir con letras, o si es conveniente usar nomas letra
+def imprimir_tablero():
+    for i in tablero:
+        for j in i:
+            print(" ",j,end="") #imprime de manera estetica la tabla, end sirve para que las lineas se impriman de manera horizontal
+        print(" ")
     for i in tablero:
         for j in i:
             print(" ",j,end="") #imprime de manera estetica la tabla, end sirve para que las lineas se impriman de manera horizontal
@@ -28,8 +34,6 @@ def colocar_personaje(personaje): #Posibles problemas, si el random hace que est
         if tablero[i][j] == 0:
             tablero[i][j] = personaje
     return i,j   #retorna lo las posiciones
-
-crear_tablero()
 
 def fun_de_mov_human(gat_o_rat):
     mov = input(f"donde desdea mover? \nw - Arriba \ns - Abajo  \nd - Derecha \na - Izquierda\n")
@@ -47,30 +51,34 @@ def fun_de_mov_human(gat_o_rat):
         pass
         print("")
 
-def movimineto_valido(mov, gat_o_rat): #Corroborar si se puede mover a donde se quiere, da true o false, si el movimiento se puede o no hacer
-    if gat_o_rat == 1:
-        pos = pos_gato
+#Corroborar si se puede mover a donde se quiere, da true o false, si el movimiento se puede o no hacer
+def movimineto_valido(mov, elecc_humano):
+    if elecc_humano == 1:
+        x = pos_gato[0]
+        y = pos_gato[1]
     else:
-        pos = pos_raton
-    print(pos)
+        x = pos_raton[0]
+        y = pos_raton[1]
+
+    print(x,y)
 
     if mov == "w":
-        if (pos[0]-1) >= 0: #pos[0]-1 >= 0, se toma este valor para corroborar que no desborde por arriba
+        if (x-1) >= 0: #pos[0]-1 >= 0, se toma este valor para corroborar que no desborde por arriba
             return True
         else:
             return False
     elif mov == "s":
-        if (pos[0] + 1) < tamano_x: #pos[0] + 1 <= tamano_x, para que no desborde por abajo 
+        if (x + 1) < tamano_x: #pos[0] + 1 <= tamano_x, para que no desborde por abajo
             return True
         else:
             return False
     elif mov == "d":
-        if (pos[1]+1) < tamano_y: #pos[1]+1 <= tamano_y, para que no desborde por la derecha
+        if (y+1) < tamano_y: #pos[1]+1 <= tamano_y, para que no desborde por la derecha
             return True
         else:
             return False
     elif mov == "a":
-        if (pos[1]-1) >= 0: #pos[1]-1 <= 0, para que no desborde por la izquierda
+        if (y-1) >= 0: #pos[1]-1 <= 0, para que no desborde por la izquierda
             return True
         else:
             return False
