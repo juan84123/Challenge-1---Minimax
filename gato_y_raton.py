@@ -27,7 +27,7 @@ def imprimir_tablero():
 def imprimir_tablero_estetico():
     for i in tablero:
         for j in i:
-            if j == 0: print(" "," \u00B7 ",end="")
+            if j == 0: print(" ",".",end="")
             elif j == 1: print(" ","G",end="") #al poner los emojis la matriz cambia, y ya no es estetica
             else: print(" ","R",end="")
         print(" ")
@@ -146,3 +146,32 @@ imprimir_tablero_estetico()
 elecc_humano = int(input("Desea ser:\n1 : Gato \n2 : Raton\n")) # para saber que va ser el humano
 turno_actual = elecc_humano #turno_actual se va encargar de cambiar los turnos
 #donde meter el cambio de turno
+
+while True:
+    #imprimir_tablero()
+    imprimir_tablero_estetico()
+#Humano
+#Corroboramos que el turno sea del humano
+    if turno_actual == elecc_humano:
+        if elecc_humano == 1: titulo = "Gato"
+        else: titulo = "Raton"
+        print(f"Es el turno del {titulo}")
+#Corrobora que el turno se hizo para cambiar el turno, y llama a la funcion que mueve la pieza
+        if fun_de_mov_human(elecc_humano):
+            cambiar_turno()
+        if corroborar_fin():
+            imprimir_tablero_estetico()
+            break #Corrobora si el juego termina
+    else:
+        if elecc_humano == 1: titulo = "Raton"
+        else: titulo = "Gato"
+        print(f"Es el turno del {titulo}")
+        #Maquina
+        #funcion de AI #Hacer la funcion de la computadora
+        cambiar_turno()
+        if corroborar_fin():
+            imprimir_tablero_estetico()
+            break
+
+#error hasta ahora: una vez que el gato agarra al raton, en el tablero debe estar si o si G, si el
+#raton intenta agarrar al gato, se queda R en el tablero
