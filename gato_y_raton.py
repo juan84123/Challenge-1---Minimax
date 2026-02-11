@@ -1,10 +1,12 @@
 import random
-tamano_x = 5    #tamano i de la matriz 
-tamano_y = 5    #tamano j de la matriz
-cant_turno = 5 #Para finalizar el juego
-tablero = [] #tablero de juego
-pos_gato = [] #posicion del gato
-pos_raton = [] #posicion del raton
+tamano_x = 5    #tamano i de la matriz
+tamano_y = 3    #tamano j de la matriz
+cant_turno = 5   #Para finalizar el juego
+tablero = []     #tablero de juego
+tablero_estetico = []
+pos_gato = []    #posicion del gato
+pos_raton = []   #posicion del raton
+turno_actual = 0
 
 #funcion que crea el tablero y lo llena de 0
 def crear_tablero():
@@ -20,12 +22,19 @@ def imprimir_tablero():
         for j in i:
             print(" ",j,end="") #imprime de manera estetica la tabla, end sirve para que las lineas se impriman de manera horizontal
         print(" ")
+
+#Esta funcion vaservir a modo que se vea estetico el juego el otro es solo para logica
+def imprimir_tablero_estetico():
     for i in tablero:
         for j in i:
-            print(" ",j,end="") #imprime de manera estetica la tabla, end sirve para que las lineas se impriman de manera horizontal
+            if j == 0: print(" "," \u00B7 ",end="")
+            elif j == 1: print(" ","🐱",end="") #al poner los emojis la matriz cambia, y ya no es estetica
+            else: print(" ","🐭",end="")
         print(" ")
-
-def colocar_personaje(personaje): #Posibles problemas, si el random hace que esten my cerca
+            #if fila == 0: print(".")
+   
+#Posibles problemas, si el random hace que esten my cerca, o si dan el mismo numero
+def colocar_personaje(personaje):
     i = random.randint(0, tamano_x - 1) #genera un valor random para el eje x
     j = random.randint(0, tamano_y - 1) #genera un valor random para el eje y
     while tablero[i][j] != personaje: #si el valor en la matriz con los valores random son iguales
@@ -35,21 +44,23 @@ def colocar_personaje(personaje): #Posibles problemas, si el random hace que est
             tablero[i][j] = personaje
     return i,j   #retorna lo las posiciones
 
-def fun_de_mov_human(gat_o_rat):
+#Se encarga de imprimir a donde desea mover el humano, y llamar a las funciones que corroboran el movimiento y que hace el movimiento
+def fun_de_mov_human(elecc_humano):
     mov = input(f"donde desdea mover? \nw - Arriba \ns - Abajo  \nd - Derecha \na - Izquierda\n")
-   
-    if movimineto_valido(mov, gat_o_rat): # movimiento valido que sea true or false
-        mover_ficha(mov, gat_o_rat)
-        pass
-    elif mov == "s":
-        pass
-    elif mov == "d":
-        pass
-    elif mov == "a":
-        pass
+    if movimineto_valido(mov, elecc_humano): # movimiento valido que sea true or false
+        mover_ficha(mov, elecc_humano)
+        return True
     else:
-        pass
-        print("")
+        print("Ese movimiento no es valido")
+        return False
+
+#Cambia el turno
+def cambiar_turno():
+    global turno_actual
+    if turno_actual == 1:
+        turno_actual = 2
+    else:
+        turno_actual = 1
 
 #Corroborar si se puede mover a donde se quiere, da true o false, si el movimiento se puede o no hacer
 def movimineto_valido(mov, elecc_humano):
@@ -112,7 +123,6 @@ def mover_ficha(mov, elecc_humano):
         pos_raton[0] = i
         pos_raton[1] = j
 
-
 #Corrobora el fin de juego, lo que falta es que cant_turnos disminuya, cada jugada
 def corroborar_fin():
     if  cant_turno == 0:
@@ -126,14 +136,13 @@ def corroborar_fin():
         return False
 
 print("Juego del gato y raton")
-pos_gato = colocar_personaje(1)
-pos_raton = colocar_personaje(2)
+crear_tablero()
+pos_gato = list(colocar_personaje(1)) #se usa list para que el valor que retorna sea una lista y no tupla
+pos_raton = list(colocar_personaje(2))
+#hacer una funcion o en la misma de colocar personaje, que se encargue de que si estan muy cerca separe los personajes
 print(pos_gato,pos_raton)
-imprimir_tablero()
-
-gat_o_rat = int(input("Desea ser:\n1 : Gato \n2 : Raton\n")) # para saber que va ser el humano
-
-while True:
-    imprimir_tablero()
-    fun_de_mov_human(gat_o_rat)
-    corroborar_fin()
+#imprimir_tablero()
+imprimir_tablero_estetico()
+elecc_humano = int(input("Desea ser:\n1 : Gato \n2 : Raton\n")) # para saber que va ser el humano
+turno_actual = elecc_humano #turno_actual se va encargar de cambiar los turnos
+#donde meter el cambio de turno
