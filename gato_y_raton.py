@@ -15,7 +15,9 @@ def crear_tablero(): #funcion que crea el tablero y lo llena de 0
 
 def imprimir_tablero(): #funcion para imprimir el tablero, mas adelante, ver de imprimir con letras, o si es conveniente usar nomas letra
     for i in tablero:
-       print(f"{i}\n")
+        for j in i:
+            print(" ",j,end="") #imprime de manera estetica la tabla, end sirve para que las lineas se impriman de manera horizontal
+        print(" ")
 
 def colocar_personaje(personaje): #Posibles problemas, si el random hace que esten my cerca
     i = random.randint(0, tamano_x - 1) #genera un valor random para el eje x
