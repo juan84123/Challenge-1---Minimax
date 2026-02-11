@@ -83,25 +83,36 @@ def movimineto_valido(mov, elecc_humano):
         else:
             return False
 
-def mover_ficha(mov, gat_o_rat): #Funcion funciona mal
-    if gat_o_rat == 1:
-        pos = pos_gato
+#Funcion funciona mal, no se cambia la pocion del gato ni el raton que es global
+def mover_ficha(mov, elecc_humano):
+    if elecc_humano == 1: #para saber si modificar gato o raton
+        i = pos_gato[0]
+        j = pos_gato[1]
     else:
-        pos = pos_raton
-    
-    if mov == "w":
-        tablero[pos[0]][pos[1]] = 0
-        tablero[pos[0]-1][pos[1]] = gat_o_rat   
-    if mov == "s":
-        tablero[pos[0]][pos[1]] = 0
-        tablero[pos[0]+1][pos[1]] = gat_o_rat   
-    if mov == "d":
-        tablero[pos[0]][pos[1]] = 0
-        tablero[pos[0]][pos[1]+1] = gat_o_rat
-    if mov == "a": 
-        tablero[pos[0]][pos[1]] = 0
-        tablero[pos[0]][pos[1]-1] = gat_o_rat   
-    
+        i = pos_raton[0]
+        j = pos_raton[1]
+
+    tablero[i][j] = 0 #para el lugar donde esta ahora se borre
+
+    if mov == "w": #Mueve las piezas, arriba
+        i = i - 1
+    elif mov == "s": #Mueve las piezas, abajo
+        i = i + 1
+    elif mov == "d": #Mueve las piezas, derecha
+        j = j + 1
+    elif mov == "a": #Mueve las piezas, izquierda
+        j = j - 1
+   
+    tablero[i][j] = elecc_humano #Hace el cambio en el tablero
+
+    if elecc_humano == 1: # guarda la nueva posicion de la ficha juagada
+        pos_gato[0] = i
+        pos_gato[1] = j
+    else:
+        pos_raton[0] = i
+        pos_raton[1] = j
+
+
 def corroborar_fin():
     pass
 
