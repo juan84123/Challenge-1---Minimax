@@ -6,10 +6,6 @@ tamano_x = 5            #Tamano i de la matriz
 tamano_y = 5            #Tamano j de la matriz
 cant_turno = 50         #Para finalizar el juego
 turno_actual = 0        #Elturno actual que se esta jugando
-#nivel 1: la AI mueve al azar
-#nivel 2: la AI es greedy, busca la mejor jugada sin ver a futuro
-#nivel 3: la AI ya ve a futuro
-nivel_ai = 0
 tablero = []            #Tablero de juego
 pos_gato = []           #Posicion del gato
 pos_raton = []          #Posicion del raton
@@ -70,7 +66,6 @@ def fun_de_mov_human(elecc_humano):
 
 #Todavia no es inteligente, pero ya puede mover
 def fun_de_mov_ai(elecc_humano):
-    global nivel_ai
     movimientos = ["w","s","a","d"] 
     if elecc_humano == 1:
         elecc_ai = 2
@@ -78,28 +73,12 @@ def fun_de_mov_ai(elecc_humano):
     else:
         elecc_ai = 1
         mejor_distancia = 999
-    if nivel_ai == 1:
         while True:
 #Elige un movimiento predeterminado que se definio en movimineto valido
             mov = movimientos[random.randint(0, 3)]
             if movimineto_valido(mov, elecc_ai):
                 mover_ficha(mov,elecc_ai)
                 break
-
-#################### NIVEL 2 ############################
-    elif nivel_ai == 2:
-        for movidas in movimientos:
-            if movimineto_valido(movidas, elecc_ai):
-                if elecc_ai == 1:
-                    i = pos_gato[0]
-                    j = pos_gato[1]
-                    sim_gato = list(mover_ficha_simulada(i,j,elecc_ai,movidas))
-                    dist = calcular_distancia(sim_gato,elecc_ai)
-                else:
-                    i = pos_raton[0]
-                    j = pos_raton[1]
-                    sim_raton = list(mover_ficha_simulada(i,j,elecc_ai,movidas))
-                    dist = calcular_distancia(sim_raton,elecc_ai)
 
 def mover_ficha_simulada(i,j,elecc_ai,mov):
     if mov == "w": #Mueve las piezas, arriba
@@ -225,7 +204,6 @@ pos_gato = list(colocar_personaje(1))
 pos_raton = list(colocar_personaje(2))
 imprimir_tablero_estetico()
 #Para saber que va ser el humano
-nivel_ai = int(input("Dificulad de la AI:\n1 : Nivel 1\n2 : Nivel 2\nElección: "))
 elecc_humano = int(input("Desea ser:\n1 : Gato \n2 : Raton\nElección: "))
 #Turno_actual se va encargar de cambiar los turnos
 turno_actual = elecc_humano
