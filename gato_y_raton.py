@@ -77,29 +77,78 @@ def fun_de_mov_human(elecc_humano):
         return False
 
 #Todavia no es inteligente, pero ya puede mover
-#nivel 1: la AI mueve al azar
-#nivel 2: la AI es greedy, busca la mejor jugada sin ver a futuro
-#nivel 3: la AI ya ve a futuro
+#nivel 1: la AI mueve al azar - TERMINADO, LOS 2 USAN LA MISMA LOGICA
+#nivel 2: la AI es greedy, busca la mejor jugada sin ver a futuro - LAS LOGICAS YA DEBEN SER DIFERENTES
+#nivel 3: la AI ya ve a futuro - LAS LOGICAS YA DEBEN SER DIFERENTES
 def fun_de_mov_ai(elecc_humano):
     global nivel_ai
-
     if elecc_humano == 1:
         elecc_ai = 2
+        mejor_distancia = 0
         movimientos = ["w","s","a","d","q","e","z","x"] #Se usa para elegir un moviemto aleatorio RATON
     else:
         elecc_ai = 1
+        mejor_distancia = 999
         movimientos = ["w","s","a","d"] #Se usa para elegir un moviemto aleatorio GATO
-   
-    while True:
+    if nivel_ai == 1:
+        while True:
 #Elige un movimiento predeterminado que se definio en movimineto valido
-        if elecc_ai == 1:
-            mov = movimientos[random.randint(0, 3)]
-        else:
-            mov = movimientos[random.randint(0, 7)]
+            if elecc_ai == 1:
+                mov = movimientos[random.randint(0, 3)]
+            else:
+                mov = movimientos[random.randint(0, 7)]
        
-        if movimineto_valido(mov, elecc_ai):
-            mover_ficha(mov,elecc_ai)
-            break
+            if movimineto_valido(mov, elecc_ai):
+                mover_ficha(mov,elecc_ai)
+                break
+#################### NIVEL 2 ############################
+    elif nivel_ai == 2:
+        for movidas in movimientos:
+            if movimineto_valido(movidas, elecc_ai):
+                if elecc_ai == 1:
+                    i = pos_gato[0]
+                    j = pos_gato[1]
+                    sim_gato = list(mover_ficha_simulada(i,j,elecc_ai,movidas))
+                    dist = calcular_distancia(sim_gato,elecc_ai)
+                else:
+                    i = pos_raton[0]
+                    j = pos_raton[1]
+                    sim_raton = list(mover_ficha_simulada(i,j,elecc_ai,movidas))
+                    dist = calcular_distancia(sim_raton,elecc_ai)
+
+def mover_ficha_simulada(i,j,elecc_ai,mov):
+    if mov == "w": #Mueve las piezas, arriba
+        i -= 1
+    elif mov == "s": #Mueve las piezas, abajo
+        i += 1
+    elif mov == "d": #Mueve las piezas, derecha
+        j += 1
+    elif mov == "a": #Mueve las piezas, izquierda
+        j -= 1
+    elif elecc_ai == 2:#Mover fichas en diagonal SOLO RATON
+        if mov == "q": #Diagonal izquierda, superior SOLO RATON
+            i -= 1
+            j -= 1
+        elif mov == "e": #Diagonal derecha, superior SOLO RATON
+            i -= 1
+            j += 1
+        elif mov == "z": #Diagonal izquierda, inferior SOLO RATON
+            i += 1
+            j -= 1
+        elif mov == "x": #Diagonal derecha, inferior SOLO RATON
+            i += 1
+            j += 1
+
+    if elecc_ai == 1: # guarda la nueva posicion de la ficha juagada
+        return i,j
+    else:
+        return i,j
+    
+def calcular_distancia(posicion_sim, elecc_ai):
+    if elecc_ai == 1:
+        return abs(posicion_sim[0]-pos_raton[0]) + abs(posicion_sim[1]-pos_raton[1])
+    else:
+        return abs(posicion_sim[0]-pos_gato[0]) + abs(posicion_sim[1]-pos_gato[1])
 
 #Cambia el turno
 def cambiar_turno():
@@ -196,7 +245,6 @@ def corroborar_fin():
     else:
         return False
 
-
 ############## NO SE COMO HACER MINIMAX #####################################
 def caso_base():
     if corroborar_fin():
@@ -212,7 +260,7 @@ def evaluar_tablero(elecc_ai):
 def minimax():
     pos_g_sim = pos_gato
     pos_r_sim = pos_raton
-    dist_manh = abs(pos_g_sim[0]-pos_r_sim[0]) - abs(pos_g_sim[1]-pos_r_sim[1])
+    dist_manh = abs(pos_g_sim[0]-pos_r_sim[0]) + abs(pos_g_sim[1]-pos_r_sim[1])
     if dist_manh:
         pass
     pass
@@ -227,7 +275,7 @@ pos_gato = list(colocar_personaje(1))
 pos_raton = list(colocar_personaje(2))
 imprimir_tablero_estetico()
 #Para saber que va ser el humano
-nivel_ai = int(input("Dificulad de la AI: \n1 : Nivel 1\n2 : Nivel 2\n3 : Nivel 3\nElección: "))
+nivel_ai = int(input("Dificulad de la AI:\n1 : Nivel 1\n2 : Nivel 2\n3 : Nivel 3\nElección: "))
 elecc_humano = int(input("Desea ser:\n1 : Gato \n2 : Raton\nElección: "))
 #Turno_actual se va encargar de cambiar los turnos
 turno_actual = elecc_humano
