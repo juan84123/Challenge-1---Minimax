@@ -137,15 +137,17 @@ def corroborar_fin():
 
 print("Juego del gato y raton")
 crear_tablero()
-pos_gato = list(colocar_personaje(1)) #se usa list para que el valor que retorna sea una lista y no tupla
+#se usa list para que el valor que retorna sea una lista y no tupla
+pos_gato = list(colocar_personaje(1)) 
 pos_raton = list(colocar_personaje(2))
 #hacer una funcion o en la misma de colocar personaje, que se encargue de que si estan muy cerca separe los personajes
 print(pos_gato,pos_raton)
 #imprimir_tablero()
 imprimir_tablero_estetico()
-elecc_humano = int(input("Desea ser:\n1 : Gato \n2 : Raton\n")) # para saber que va ser el humano
-turno_actual = elecc_humano #turno_actual se va encargar de cambiar los turnos
-#donde meter el cambio de turno
+# para saber que va ser el humano
+elecc_humano = int(input("Desea ser:\n1 : Gato \n2 : Raton\n")) 
+#turno_actual se va encargar de cambiar los turnos
+turno_actual = elecc_humano 
 
 while True:
     #imprimir_tablero()
