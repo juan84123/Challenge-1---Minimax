@@ -55,20 +55,12 @@ def colocar_personaje(personaje):
 #corroboran el movimiento y que hace el movimiento
 def fun_de_mov_human(elecc_humano):
 #poner un if, si es gato mira solo 4 opciones de movimiento, si es raton mira 8
-    if elecc_humano == 1:
-        mov = input(f"Donde desdea mover:\n"
+    mov = input(f"Donde desdea mover:\n"
         "   w     \n"
         "a     d  \n"
         "   s     \n"
         "Elección: ")
 
-    else:
-        mov = input(f"Donde desdea mover:\n"
-        "q  w  e  \n"
-        "a     d  \n"
-        "z  s  x  \n"
-        "Elección: ")
-   
     if movimineto_valido(mov, elecc_humano): #Si el movimiento es valido hace el movimiento
         mover_ficha(mov, elecc_humano)
         return True
@@ -77,30 +69,23 @@ def fun_de_mov_human(elecc_humano):
         return False
 
 #Todavia no es inteligente, pero ya puede mover
-#nivel 1: la AI mueve al azar - TERMINADO, LOS 2 USAN LA MISMA LOGICA
-#nivel 2: la AI es greedy, busca la mejor jugada sin ver a futuro - LAS LOGICAS YA DEBEN SER DIFERENTES
-#nivel 3: la AI ya ve a futuro - LAS LOGICAS YA DEBEN SER DIFERENTES
 def fun_de_mov_ai(elecc_humano):
     global nivel_ai
+    movimientos = ["w","s","a","d"] 
     if elecc_humano == 1:
         elecc_ai = 2
-        mejor_distancia = 0
-        movimientos = ["w","s","a","d","q","e","z","x"] #Se usa para elegir un moviemto aleatorio RATON
+        mejor_distancia = 0 #Se usa para elegir un moviemto aleatorio RATON
     else:
         elecc_ai = 1
         mejor_distancia = 999
-        movimientos = ["w","s","a","d"] #Se usa para elegir un moviemto aleatorio GATO
     if nivel_ai == 1:
         while True:
 #Elige un movimiento predeterminado que se definio en movimineto valido
-            if elecc_ai == 1:
-                mov = movimientos[random.randint(0, 3)]
-            else:
-                mov = movimientos[random.randint(0, 7)]
-       
+            mov = movimientos[random.randint(0, 3)]
             if movimineto_valido(mov, elecc_ai):
                 mover_ficha(mov,elecc_ai)
                 break
+
 #################### NIVEL 2 ############################
     elif nivel_ai == 2:
         for movidas in movimientos:
@@ -125,19 +110,6 @@ def mover_ficha_simulada(i,j,elecc_ai,mov):
         j += 1
     elif mov == "a": #Mueve las piezas, izquierda
         j -= 1
-    elif elecc_ai == 2:#Mover fichas en diagonal SOLO RATON
-        if mov == "q": #Diagonal izquierda, superior SOLO RATON
-            i -= 1
-            j -= 1
-        elif mov == "e": #Diagonal derecha, superior SOLO RATON
-            i -= 1
-            j += 1
-        elif mov == "z": #Diagonal izquierda, inferior SOLO RATON
-            i += 1
-            j -= 1
-        elif mov == "x": #Diagonal derecha, inferior SOLO RATON
-            i += 1
-            j += 1
 
     if elecc_ai == 1: # guarda la nueva posicion de la ficha juagada
         return i,j
@@ -178,15 +150,6 @@ def movimineto_valido(mov, elecc_humano):
         return (j + 1) < tamano_y #pos[1]+1 <= tamano_y, para que no desborde por la derecha
     elif mov == "a":
         return (j - 1) >= 0 #pos[1]-1 <= 0, para que no desborde por la izquierda
-    elif elecc_humano == 2: #Validacion de diagonales solo para el RATON
-        if mov == "q":  #Diagonal izquierda, superior SOLO RATON
-            return (i - 1) >= 0 and (j - 1) >= 0
-        elif mov == "e": #Diagonal derecha, superior SOLO RATON
-            return (i - 1) >= 0 and (j + 1) < tamano_y
-        elif mov == "z": #Diagonal izquierda, inferior SOLO RATON
-            return (i + 1) < tamano_x and (j - 1) >= 0
-        elif mov == "x": #Diagonal derecha, inferior SOLO RATON
-            return (i + 1) < tamano_x and (j + 1) < tamano_y
     else:
         return False      
 
@@ -210,19 +173,6 @@ def mover_ficha(mov, elecc_humano):
         j += 1
     elif mov == "a": #Mueve las piezas, izquierda
         j -= 1
-    elif elecc_humano == 2:#Mover fichas en diagonal SOLO RATON
-        if mov == "q": #Diagonal izquierda, superior SOLO RATON
-            i -= 1
-            j -= 1
-        elif mov == "e": #Diagonal derecha, superior SOLO RATON
-            i -= 1
-            j += 1
-        elif mov == "z": #Diagonal izquierda, inferior SOLO RATON
-            i += 1
-            j -= 1
-        elif mov == "x": #Diagonal derecha, inferior SOLO RATON
-            i += 1
-            j += 1
 
     tablero[i][j] = elecc_humano #Hace el cambio en el tablero
 
@@ -275,7 +225,7 @@ pos_gato = list(colocar_personaje(1))
 pos_raton = list(colocar_personaje(2))
 imprimir_tablero_estetico()
 #Para saber que va ser el humano
-nivel_ai = int(input("Dificulad de la AI:\n1 : Nivel 1\n2 : Nivel 2\n3 : Nivel 3\nElección: "))
+nivel_ai = int(input("Dificulad de la AI:\n1 : Nivel 1\n2 : Nivel 2\nElección: "))
 elecc_humano = int(input("Desea ser:\n1 : Gato \n2 : Raton\nElección: "))
 #Turno_actual se va encargar de cambiar los turnos
 turno_actual = elecc_humano
