@@ -14,7 +14,7 @@ def crear_tablero():
 def imprimir_tablero():
     for i in tablero:
         for j in i:
-            print(" ",j,end="") #imprime de manera estetica la tabla, end sirve para que las lineas se impriman de manera horizontal
+            print(" ", j, end="") #imprime de manera estetica la tabla, end sirve para que las lineas se impriman de manera horizontal
         print(" ")
 
 def colocar_personaje(personaje):
@@ -33,16 +33,10 @@ def fun_de_mov_human(eleccion_jugador):
         "Elección: ")
     return mov
 
-def movimineto_valido(mov, elecc):
-    if elecc == 1:
-        i = pos_gato[0]
-        j = pos_gato[1]
-    else:
-        i = pos_raton[0]
-        j = pos_raton[1]
+def movimineto_valido(mov, pos):
+    i = pos[0]
+    j = pos[1]
 
-    #poner un if, si es gato mira solo 4 opciones de movimiento, si es raton mira 8
-    #se puede mejorar el codigo return (x - 1) >= 0 sin usar else
     if mov == "w":
         return (i - 1) >= 0 #pos[0]-1 >= 0, se toma este valor para corroborar que no desborde por arriba
     elif mov == "s":
@@ -54,16 +48,11 @@ def movimineto_valido(mov, elecc):
     else:
         return False      
 
-def mover_ficha(mov, elecc_humano):
-    if elecc_humano == 1: #para saber si modificar gato o raton
-        i = pos_gato[0]
-        j = pos_gato[1]
-    else:
-        i = pos_raton[0]
-        j = pos_raton[1]
+def mover_ficha(mov, ficha, pos):
+    i = pos[0]
+    j = pos[1]
 
-    tablero[i][j] = 0 #para el lugar donde esta ahora se borre
- #poner un if, si es gato mira solo 4 opciones de movimiento, si es raton mira 8
+    tablero[i][j] = "." #para el lugar donde esta ahora se borre
 
     if mov == "w": #Mueve las piezas, arriba
         i -= 1
@@ -74,36 +63,60 @@ def mover_ficha(mov, elecc_humano):
     elif mov == "a": #Mueve las piezas, izquierda
         j -= 1
 
-    tablero[i][j] = elecc_humano #Hace el cambio en el tablero
+    tablero[i][j] = ficha #Hace el cambio en el tablero
 
-    if elecc_humano == 1: # guarda la nueva posicion de la ficha juagada
-        pos_gato[0] = i
-        pos_gato[1] = j
+    return i,j 
+
+def corroborar_fin(cant_turno, pos_1,  pos_2):
+    if  cant_turno == 0:
+        print("El RATON se escapo")
+        return True
+    elif pos_1 == pos_2:
+        tablero[pos_1[0]][pos_1[1]] = "G"
+        print("El GATO comio al raton")        
+        return True
     else:
-        pos_raton[0] = i
-        pos_raton[1] = j
+        return False
+
+def cambiar_turno(turno_actual):
+    if turno_actual == "G":
+        turno_actual = "R"
+    else:
+        turno_actual = "G"
+    return turno_actual
 
 crear_tablero()
+cant_turno = 50
 print("Juego del Gato y Raton")
 imprimir_tablero()
 pos_gato = list(colocar_personaje("G"))
 pos_raton = list(colocar_personaje("R"))
+ficha_jugador = input("Desea ser:\ng : Gato \nr : Raton\nElección: ")
 
-eleccion_jugador = input("Desea ser:\ng : Gato \nr : Raton\nElección: ")
+if ficha_jugador == "G":
+    pos_jugador = pos_gato
+    pos_ai = pos_raton
+else:
+    pos_jugador = pos_raton
+    pos_ai = pos_gato
 
-turno_actual = eleccion_jugador
+turno_actual = ficha_jugador
 
 while True:
     imprimir_tablero()
-    if turno_actual == eleccion_jugador:
-        mov = fun_de_mov_human(eleccion_jugador)
-        if movimineto_valido(mov, eleccion_jugador):
-            mover_ficha(mov, eleccion_jugador)
+    if turno_actual == ficha_jugador:         
+        mov = fun_de_mov_human(ficha_jugador)
+        if movimineto_valido(mov, pos_jugador):
+            pos_jugador = list(mover_ficha(mov, ficha_jugador, pos_jugador))
+            cant_turno -= 1
+            turno_actual = cambiar_turno(turno_actual)
+            print(turno_actual)
         else:
             print("Ese movimiento no es valido")
-
-        pass
     else:
+        print("Turno de la IA")
 
-        pass
-    pass
+        turno_actual = cambiar_turno(turno_actual)
+    
+    if corroborar_fin(cant_turno, pos_jugador, pos_ai):
+        break
