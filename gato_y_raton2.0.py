@@ -105,7 +105,9 @@ def dist_manhatan(pos_gato,pos_raton):
 def minimax(pos_gato,pos_raton,cant_turno, profundidad,maximizador):
     movimientos = ["w","s","a","d"]
 
-    if profundidad == 0 or corroborar_fin(cant_turno, pos_gato, pos_raton,tablero_de_juego):
+    if profundidad == 0:
+        return -dist_manhatan(pos_gato, pos_raton)
+    if corroborar_fin(cant_turno, pos_gato, pos_raton,tablero_de_juego):
         return -dist_manhatan(pos_gato, pos_raton)
     
     if maximizador:
@@ -128,13 +130,14 @@ def minimax(pos_gato,pos_raton,cant_turno, profundidad,maximizador):
 def fun_de_mov_ai(turno_actual, pos_gato, pos_raton):
     movimientos = ["w","s","a","d"]
     mejor_mov = ""
+    profundidad = 6
 
     if turno_actual == "G":
         mejor_puntaje = -99999
         for movimiento in movimientos:
             if movimineto_valido(movimiento, pos_gato):
                 pos_gato_sim = mover_ficha_sim (movimiento,"G", pos_gato) 
-                puntaje = minimax(pos_gato_sim, pos_raton, cant_turno, 3, False)
+                puntaje = minimax(pos_gato_sim, pos_raton, cant_turno, profundidad, False)
                 if puntaje > mejor_puntaje:
                     mejor_puntaje = puntaje
                     mejor_mov = movimiento
@@ -143,7 +146,7 @@ def fun_de_mov_ai(turno_actual, pos_gato, pos_raton):
         for movimiento in movimientos:
             if movimineto_valido(movimiento, pos_raton):
                 pos_raton_sim = mover_ficha_sim (movimiento,"R", pos_raton) 
-                puntaje = minimax(pos_gato, pos_raton_sim, cant_turno, 3, True)
+                puntaje = minimax(pos_gato, pos_raton_sim, cant_turno, profundidad, True)
                 if puntaje < mejor_puntaje:
                     mejor_puntaje = puntaje
                     mejor_mov = movimiento
@@ -155,7 +158,6 @@ print("Juego del Gato y Raton")
 pos_gato = list(colocar_personaje("G",tablero_de_juego))
 pos_raton = list(colocar_personaje("R",tablero_de_juego))
 imprimir_tablero(tablero_de_juego)
-
 #Guarda la ficha y la hace que sea mayuscula
 ficha_jugador = input("Desea ser:\nG : Gato \nR : Raton\nElección: ").upper()
 
