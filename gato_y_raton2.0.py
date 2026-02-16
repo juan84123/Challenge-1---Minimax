@@ -157,12 +157,12 @@ def fun_de_mov_ai(turno_actual, pos_gato, pos_raton):
                     mejor_puntaje = puntaje
                     mejor_mov = movimiento
     else:
-        mejor_puntaje = 99999
+        mejor_puntaje = -99999
         for movimiento in movimientos:
             if movimineto_valido(movimiento, pos_raton):
                 pos_raton_sim = mover_ficha_sim (movimiento, pos_raton) 
-                puntaje = minimax(pos_gato, pos_raton_sim, cant_turno, profundidad, True, turno_actual)
-                if puntaje < mejor_puntaje:
+                puntaje = minimax(pos_gato, pos_raton_sim, cant_turno, profundidad, False, turno_actual)
+                if puntaje > mejor_puntaje:
                     mejor_puntaje = puntaje
                     mejor_mov = movimiento
     return mejor_mov
