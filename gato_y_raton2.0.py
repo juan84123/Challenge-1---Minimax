@@ -208,8 +208,9 @@ while True:
         print("Truno del Gato")
     else:
         print("Turno del Raton")
+
 #Jugada de Humano 
-    if turno_actual == ficha_jugador:         
+    if turno_actual == ficha_jugador:
         mov = fun_de_mov_human(ficha_jugador)
         if ficha_jugador == "G":
             if movimineto_valido(mov, pos_gato):
