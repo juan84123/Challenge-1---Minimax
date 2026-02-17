@@ -7,10 +7,10 @@ cant_turno = 50         #Cantidad de turnos
 def crear_tablero():
     tablero = []
     for fila in range(tamano_x):
-       fila = [] # Se crea una lista (fila) vacia
+       nueva_fila = [] # Se crea una lista (fila) vacia
        for columna in range(tamano_y):  
-           fila.append(".") # Se meten los 0 en la fila 1 por 1
-       tablero.append(fila) # Se agrega la fila a la matriz
+           nueva_fila.append(".") # Se meten los 0 en la fila 1 por 1
+       tablero.append(nueva_fila) # Se agrega la fila a la matriz
     return tablero
 
 def imprimir_tablero(tablero_de_juego):
@@ -215,7 +215,7 @@ while True:
         if  pos_gato == pos_raton:
             tablero_de_juego[pos_gato[0]][pos_gato[1]] = "G"
             print("El GATO comio al raton")  
-        if cant_turno == 0:
+        elif cant_turno == 0:
              print("El RATON se escapo")    
         imprimir_tablero(tablero_de_juego)
         break
