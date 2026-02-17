@@ -4,6 +4,7 @@ tamano_x = 5            #Tamano i de la matriz
 tamano_y = 5            #Tamano j de la matriz
 cant_turno = 50         #Cantidad de turnos
 
+#Se encarga de crear el tablero y llenarlo de "." y retornarlo
 def crear_tablero():
     tablero = []
     for fila in range(tamano_x):
@@ -13,12 +14,14 @@ def crear_tablero():
        tablero.append(fila) # Se agrega la fila a la matriz
     return tablero
 
+#Imprime el tablero de manera estetica
 def imprimir_tablero(tablero_de_juego):
     for i in tablero_de_juego:
         for j in i:
             print(" ", j, end="") #imprime de manera estetica la tabla, end sirve para que las lineas se impriman de manera horizontal
         print(" ")
 
+#Se encarga de poner al gato y al rato en el tablero al azar 
 def colocar_personaje(personaje, tablero_de_juego):
     while True: #si el valor en la matriz con los valores random son iguales
         i = random.randint(0, tamano_x - 1)
@@ -27,6 +30,7 @@ def colocar_personaje(personaje, tablero_de_juego):
             tablero_de_juego[i][j] = personaje
             return i,j   #retorna lo las posiciones
 
+#Imprime lo que serian los controles del humano y retorna el movimiento seleccionado
 def fun_de_mov_human(mov):
     mov = input(f"Donde desdea mover:\n"
         "   w     \n"
@@ -35,6 +39,7 @@ def fun_de_mov_human(mov):
         "Elección: ")
     return mov
 
+#Corrobora que el movimiento sea valido, que este dentro de la matriz
 def movimineto_valido(mov, pos):
     i = pos[0]
     j = pos[1]
@@ -50,6 +55,7 @@ def movimineto_valido(mov, pos):
     else:
         return False      
 
+#Se encarga de mover la ficha a su nueva posicion, y poner "." en el lugar donde estaba
 def mover_ficha(mov, ficha, pos,tablero_de_juego):
     i = pos[0]
     j = pos[1]
@@ -69,6 +75,7 @@ def mover_ficha(mov, ficha, pos,tablero_de_juego):
 
     return i,j 
 
+#Se usa para la AI, de manera a ver las siguientes movidas
 def mover_ficha_sim(mov, pos):
     i = pos[0]
     j = pos[1]
@@ -83,6 +90,7 @@ def mover_ficha_sim(mov, pos):
         j -= 1
     return i,j 
 
+#Corrobora los casos posibles de fin del juego
 def corroborar_fin(cant_turno, pos_1,  pos_2):
     if  cant_turno == 0:
         return True
@@ -91,6 +99,7 @@ def corroborar_fin(cant_turno, pos_1,  pos_2):
     else:
         return False
 
+#Da valores para que el minimax decida que hacer, #####CORROBORAR###########
 def puntajes_minimax(cant_turno, pos_gato, pos_raton, ficha_ia):
     if ficha_ia == "G":
         if pos_gato == pos_raton:
@@ -107,7 +116,7 @@ def puntajes_minimax(cant_turno, pos_gato, pos_raton, ficha_ia):
         else:
             return dist_manhatan(pos_gato, pos_raton) 
 
-
+#Cambia el turno
 def cambiar_turno(turno_actual):
     if turno_actual == "G":
         turno_actual = "R"
@@ -115,10 +124,12 @@ def cambiar_turno(turno_actual):
         turno_actual = "G"
     return turno_actual
 
+#Calcula la Distancia de manhatan, para ver la distancia entre personajes y ver que movimiento se debe hacer
 def dist_manhatan(pos_gato,pos_raton):
     dist_manh = abs(pos_gato[0]-pos_raton[0]) + abs(pos_gato[1]-pos_raton[1])
     return dist_manh
 
+#Hace el minimax
 def minimax(pos_gato,pos_raton, cant_turno, profundidad, maximizador, ficha_ia):
     movimientos = ["w","s","a","d"]
 
@@ -142,6 +153,7 @@ def minimax(pos_gato,pos_raton, cant_turno, profundidad, maximizador, ficha_ia):
                 minimo = min(aux_min, minimo)
         return minimo
 
+#La juagada de la IA
 def fun_de_mov_ai(turno_actual, pos_gato, pos_raton):
     movimientos = ["w","s","a","d"]
     mejor_mov = ""
@@ -174,7 +186,6 @@ pos_raton = list(colocar_personaje("R",tablero_de_juego))
 imprimir_tablero(tablero_de_juego)
 #Guarda la ficha y la hace que sea mayuscula
 ficha_jugador = input("Desea ser:\nG : Gato \nR : Raton\nElección: ").upper()
-
 turno_actual = ficha_jugador
 
 while True:
@@ -183,6 +194,7 @@ while True:
         print("Truno del Gato")
     else:
         print("Turno del Raton")
+        
     if turno_actual == ficha_jugador:         
         mov = fun_de_mov_human(ficha_jugador)
         if ficha_jugador == "G":
