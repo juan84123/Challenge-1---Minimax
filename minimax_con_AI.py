@@ -1,167 +1,78 @@
 import random
-import copy
 
-#Variable globales
 tamano_x = 5            #Tamano i de la matriz
 tamano_y = 5            #Tamano j de la matriz
-cant_turno = 50         #Para finalizar el juego
-turno_actual = 0        #Elturno actual que se esta jugando
-tablero = []            #Tablero de juego
-pos_gato = []           #Posicion del gato
-pos_raton = []          #Posicion del raton
+cant_turno = 70         #Cantidad de turnos
 
-#Funcion que crea el tablero y lo llena de 0
+#entender bien random.choice y random.randint
+
+#Se encarga de crear el tablero y llenarlo de "." y retornarlo
 def crear_tablero():
+    tablero = []
     for fila in range(tamano_x):
        fila = [] # Se crea una lista (fila) vacia
        for columna in range(tamano_y):  
-           fila.append(0) # Se meten los 0 en la fila 1 por 1
+           fila.append(".") # Se meten los 0 en la fila 1 por 1
        tablero.append(fila) # Se agrega la fila a la matriz
+    return tablero
 
-#Funcion para imprimir el tablero, mas adelante, ver de imprimir con letras,
-#o si es conveniente usar nomas letra
-def imprimir_tablero():
-    for i in tablero:
+#Imprime el tablero de manera estetica
+def imprimir_tablero(tablero_de_juego):
+    for i in tablero_de_juego:
         for j in i:
-            print(" ",j,end="") #imprime de manera estetica la tabla, end sirve para que las lineas se impriman de manera horizontal
+            print(" ", j, end="") #imprime de manera estetica la tabla, end sirve para que las lineas se impriman de manera horizontal
         print(" ")
 
-#Esta funcion vaservir a modo que se vea estetico el juego el otro es solo para logica
-def imprimir_tablero_estetico():
-    for i in tablero:
-        for j in i:
-            if j == 0: print(" ",".",end="")
-            elif j == 1: print(" ","G",end="") #al poner los emojis la matriz cambia, y ya no es estetica
-            else: print(" ","R",end="")
-        print(" ")
-            #if fila == 0: print(".")
-   
-#Posibles problemas, si el random hace que esten my cerca, o si dan el mismo numero
-def colocar_personaje(personaje):
+#Se encarga de poner al gato y al rato en el tablero al azar 
+def colocar_personaje(personaje, tablero_de_juego):
     while True: #si el valor en la matriz con los valores random son iguales
         i = random.randint(0, tamano_x - 1)
         j = random.randint(0, tamano_y - 1)
-        if tablero[i][j] == 0:
-            tablero[i][j] = personaje
+        if tablero_de_juego[i][j] == ".":
+            tablero_de_juego[i][j] = personaje
             return i,j   #retorna lo las posiciones
 
-#Se encarga de imprimir a donde desea mover el humano, y llamar a las funciones que
-#corroboran el movimiento y que hace el movimiento
-def fun_de_mov_human(elecc_humano):
-#poner un if, si es gato mira solo 4 opciones de movimiento, si es raton mira 8
+#Imprime lo que serian los controles del humano y retorna el movimiento seleccionado
+def fun_de_mov_human(mov):
     mov = input(f"Donde desdea mover:\n"
         "   w     \n"
         "a     d  \n"
         "   s     \n"
         "Elección: ")
+    return mov
 
-    if movimineto_valido(mov, elecc_humano): #Si el movimiento es valido hace el movimiento
-        mover_ficha(mov, elecc_humano)
-        return True
-    else:
-        print("Ese movimiento no es valido")
-        return False
+#Corrobora que el movimiento sea valido, que este dentro de la matriz
+def movimineto_valido(mov, pos):
+    i = pos[0]
+    j = pos[1]
 
-#Todavia no es inteligente, pero ya puede mover
-def fun_de_mov_ai(elecc_humano):
-    movimientos = ["w","s","a","d"]
-    mejor_mov = []
-    profundidad = 10
-
-    if elecc_humano == 1:
-        elecc_ai = 2 #La AI es el Raton
-        mejor_valor = 9999 #Se pone el maximo para comparar y que el Rato busque el numero menor
-    else:
-        elecc_ai = 1 #La AI es el Gato
-        mejor_valor = -9999 #Se pone el minimo para comparar y que el Gato busque el numero mayor
-
-    for movimiento in movimientos:
-        if movimineto_valido(movimiento,elecc_ai):
-            #simula el primer movimiento
-            if elecc_ai == 1:
-                hijo = list(mover_ficha_simulada(movimiento, pos_gato, 1))
-                valor = minimax(hijo, pos_raton, cant_turno, profundidad, False)
-                # --- LÓGICA DE DESEMPATE PARA EL GATO (MAX) ---
-                if valor > mejor_valor:
-                    mejor_valor = valor
-                    mejores_movimientos = [movimiento] # Nuevo ganador único
-                elif valor == mejor_valor:
-                    mejores_movimientos.append(movimiento) # Empate, se suma a la lista
-            else:
-                hijo = list(mover_ficha_simulada(movimiento, pos_raton, 2))
-                valor = minimax(pos_gato, hijo, cant_turno, profundidad, True)
-                # --- LÓGICA DE DESEMPATE PARA EL RATÓN (MIN) ---
-                if valor < mejor_valor:
-                    mejor_valor = valor
-                    mejores_movimientos = [movimiento] # Nuevo ganador único
-                elif valor == mejor_valor:
-                    mejores_movimientos.append(movimiento) # Empate, se suma a la lista
-# Elección final: si hay opciones, elige una al azar entre las mejores
-    if mejores_movimientos:
-        mejor_mov = random.choice(mejores_movimientos)
-        print(f"--- IA decide mover a: {mejor_mov} (opciones: {mejores_movimientos}) ---")
-        mover_ficha(mejor_mov, elecc_ai)
-
-def mover_ficha_simulada(mov,pos_a_evaluar,elecc_ai):
-    i = pos_a_evaluar[0]
-    j = pos_a_evaluar[1]
-
-    if mov == "w": #Mueve las piezas, arriba
-        i -= 1
-    elif mov == "s": #Mueve las piezas, abajo
-        i += 1
-    elif mov == "d": #Mueve las piezas, derecha
-        j += 1
-    elif mov == "a": #Mueve las piezas, izquierda
-        j -= 1
-
-    if elecc_ai == 1: # guarda la nueva posicion de la ficha juagada
-        return i,j
-    else:
-        return i,j
-
-#Cambia el turno
-def cambiar_turno():
-    global turno_actual
-    if turno_actual == 1:
-        turno_actual = 2
-    else:
-        turno_actual = 1
-
-#Corroborar si se puede mover a donde se quiere, da true o false,
-#si el movimiento se puede o no hacer
-def movimineto_valido(mov, elecc):
-    if elecc == 1:
-        i = pos_gato[0]
-        j = pos_gato[1]
-    else:
-        i = pos_raton[0]
-        j = pos_raton[1]
-
-    #poner un if, si es gato mira solo 4 opciones de movimiento, si es raton mira 8
-    #se puede mejorar el codigo return (x - 1) >= 0 sin usar else
     if mov == "w":
-        return (i - 1) >= 0 #pos[0]-1 >= 0, se toma este valor para corroborar que no desborde por arriba
+        return (i - 1) >= 0 #pos[0]-1 >= 0, se toma este valor para corroborar que no desborde por arriba, retorna TRUE o False 
     elif mov == "s":
-        return (i + 1) < tamano_x #pos[0] + 1 <= tamano_x, para que no desborde por abajo
+        return (i + 1) < tamano_x #pos[0] + 1 <= tamano_x, para que no desborde por abajo retorna TRUE o False 
     elif mov == "d":
-        return (j + 1) < tamano_y #pos[1]+1 <= tamano_y, para que no desborde por la derecha
+        return (j + 1) < tamano_y #pos[1]+1 <= tamano_y, para que no desborde por la derecha retorna TRUE o False 
     elif mov == "a":
-        return (j - 1) >= 0 #pos[1]-1 <= 0, para que no desborde por la izquierda
+        return (j - 1) >= 0 #pos[1]-1 <= 0, para que no desborde por la izquierda retorna TRUE o False 
     else:
         return False      
 
-#Funcion funciona mal, no se cambia la pocion del gato ni el raton que es global
-def mover_ficha(mov, elecc_humano):
-    if elecc_humano == 1: #para saber si modificar gato o raton
-        i = pos_gato[0]
-        j = pos_gato[1]
-    else:
-        i = pos_raton[0]
-        j = pos_raton[1]
+#Corrobora los bordes del raton, para que el gato quiera acorralar
+def ver_bordes(pos_raton):
+    i = pos_raton[0]
+    j = pos_raton[1]
 
-    tablero[i][j] = 0 #para el lugar donde esta ahora se borre
- #poner un if, si es gato mira solo 4 opciones de movimiento, si es raton mira 8
+    if i == 0 or i == tamano_x - 1 or j == tamano_y - 1 or j ==  0:
+        return True #pos[0]-1 >= 0, se toma este valor para corroborar que no desborde por arriba, retorna TRUE o False 
+    else:
+        return False  
+
+#Se encarga de mover la ficha a su nueva posicion, y poner "." en el lugar donde estaba
+def mover_ficha(mov, ficha, pos,tablero_de_juego):
+    i = pos[0]
+    j = pos[1]
+
+    tablero_de_juego[i][j] = "." #para el lugar donde esta ahora se borre
 
     if mov == "w": #Mueve las piezas, arriba
         i -= 1
@@ -172,126 +83,176 @@ def mover_ficha(mov, elecc_humano):
     elif mov == "a": #Mueve las piezas, izquierda
         j -= 1
 
-    tablero[i][j] = elecc_humano #Hace el cambio en el tablero
+    tablero_de_juego[i][j] = ficha #Hace el cambio en el tablero
 
-    if elecc_humano == 1: # guarda la nueva posicion de la ficha juagada
-        pos_gato[0] = i
-        pos_gato[1] = j
-    else:
-        pos_raton[0] = i
-        pos_raton[1] = j
+    return i,j 
 
-#Corrobora el fin de juego, lo que falta es que cant_turnos disminuya, cada jugada
-def corroborar_fin():
+#Se usa para la AI, de manera a ver las siguientes movidas
+def mover_ficha_sim(mov, pos):
+    i = pos[0]
+    j = pos[1]
+
+    if mov == "w": #Mueve las piezas, arriba
+        i -= 1
+    elif mov == "s": #Mueve las piezas, abajo
+        i += 1
+    elif mov == "d": #Mueve las piezas, derecha
+        j += 1
+    elif mov == "a": #Mueve las piezas, izquierda
+        j -= 1
+    return i,j 
+
+#Corrobora los casos posibles de fin del juego
+def corroborar_fin(cant_turno, pos_1,  pos_2):
     if  cant_turno == 0:
-        print("El RATON se escapo")
         return True
-    elif pos_gato == pos_raton:
-        tablero[pos_gato[0]][pos_gato[1]] = 1
-        print("El GATO comio al raton")        
+    elif pos_1 == pos_2:  
         return True
     else:
         return False
-    
 
-def corroborar_fin_simulado(pos_g_sim,pos_r_sim,cant_turno,profundidad):
-    if pos_g_sim == pos_r_sim:
-        return 1000 - profundidad
-    if cant_turno <= 0:
-        return -1000 + profundidad
-    return 0
-
-def movimiento_valido_sim(mov, pos_a_validar):
-        
-    i = pos_a_validar[0]
-    j = pos_a_validar[1]
-
-    #poner un if, si es gato mira solo 4 opciones de movimiento, si es raton mira 8
-    #se puede mejorar el codigo return (x - 1) >= 0 sin usar else
-    if mov == "w":
-        return (i - 1) >= 0 #pos[0]-1 >= 0, se toma este valor para corroborar que no desborde por arriba
-    elif mov == "s":
-        return (i + 1) < tamano_x #pos[0] + 1 <= tamano_x, para que no desborde por abajo
-    elif mov == "d":
-        return (j + 1) < tamano_y #pos[1]+1 <= tamano_y, para que no desborde por la derecha
-    elif mov == "a":
-        return (j - 1) >= 0 #pos[1]-1 <= 0, para que no desborde por la izquierda
+#Da valores para que el minimax decida que hacer, #####CORROBORAR###########
+def puntajes_minimax(cant_turno, pos_gato, pos_raton, profundidad):
+    dist_manhatan =  abs(pos_gato[0]-pos_raton[0]) + abs(pos_gato[1]-pos_raton[1])
+    if pos_gato == pos_raton:
+        return float('inf') - (6 - profundidad) #hace que funcione mejor, castiga ligeramente las victorias lejanas
     else:
-        return False  
-
-############## MINIMAX #####################################
-def minimax(pos_g_sim,pos_r_sim, cant_turno_sim, profundidad, maximizingPlayer):
-    dist_manh = abs(pos_g_sim[0]-pos_r_sim[0]) + abs(pos_g_sim[1]-pos_r_sim[1])
+        return -dist_manhatan #Es heurisitica, porque le estas diciendo para donde ir, de manera a que termine el juego
     
-    mov = ["w","s","a","d"] 
-    
-    resultado = corroborar_fin_simulado(pos_g_sim, pos_r_sim, cant_turno_sim, profundidad)#caso base
-    
-    if resultado != 0: 
-        return resultado
-    
-    if profundidad == 0:
-        return - dist_manh
-    
-    if maximizingPlayer: #Este if se encarga de cambiar la jugada maximizadora de la minimizadora
-        mejor_valor = -9999
-        for movimiento in mov:
-            if movimiento_valido_sim(movimiento,pos_g_sim):
-                hijo = list(mover_ficha_simulada(movimiento,pos_g_sim,1))
-                eval = minimax(hijo, pos_r_sim,cant_turno_sim - 1, profundidad - 1, False)
-                mejor_valor = max(mejor_valor,eval)
-        return mejor_valor
+#Cambia el turno
+def cambiar_turno(turno_actual):
+    if turno_actual == "G":
+        turno_actual = "R"
     else:
-        mejor_valor = 9999
-        for movimiento in mov:
-            if movimiento_valido_sim(movimiento,pos_r_sim):
-                hijo = list(mover_ficha_simulada(movimiento,pos_r_sim,2))
-                eval = minimax(pos_g_sim, hijo,cant_turno_sim - 1, profundidad - 1, True)
-                mejor_valor = min(mejor_valor,eval)
-        return mejor_valor
-############################################################
+        turno_actual = "G"
+    return turno_actual
 
+#Hace el minimax
+def minimax(pos_gato, pos_raton, cant_turno, profundidad, maximizador):
+    movimientos = ["w","s","a","d"]
+    
+    if profundidad == 0 or corroborar_fin(cant_turno, pos_gato, pos_raton):
+        return puntajes_minimax(cant_turno, pos_gato, pos_raton, profundidad)
+
+    if maximizador:
+        maximo = -float('inf')
+        for movimiento in movimientos:
+            #Solo corrobora desbordamiento
+            if movimineto_valido(movimiento, pos_gato):
+                pos_gato_sim = list(mover_ficha_sim(movimiento, pos_gato))
+                #le paso la posible juagada para que me de un valor y asi comparar ese valor con las otras posibles jugadas
+                aux_max = minimax(pos_gato_sim, pos_raton, cant_turno - 1, profundidad - 1, False) 
+                maximo = max(aux_max, maximo)
+        return maximo
+    else:
+        minimo = float('inf')
+        for movimiento in movimientos:
+            if movimineto_valido(movimiento, pos_raton):
+                pos_raton_sim = list(mover_ficha_sim(movimiento, pos_raton))
+                #le paso la posible juagada para que me de un valor y asi comparar ese valor con las otras posibles jugadas
+                aux_min = minimax(pos_gato, pos_raton_sim, cant_turno - 1, profundidad - 1, True)
+                minimo = min(aux_min, minimo)
+        return minimo
+
+#La juagada de la IA 
+def fun_de_mov_ai(turno_actual, pos_gato, pos_raton):
+    movimientos = ["w","s","a","d"]
+    mejores_mov = []
+    profundidad = 6
+
+    if turno_actual == "G":
+        mejor_puntaje = -float('inf')
+    else:
+        mejor_puntaje = float('inf')
+
+    if turno_actual == "G":
+        for movimiento in movimientos:
+            if movimineto_valido(movimiento, pos_gato):
+                pos_gato_sim = list(mover_ficha_sim(movimiento, pos_gato))
+                puntaje = minimax(pos_gato_sim, pos_raton, cant_turno - 1, profundidad - 1, False)
+                print(puntaje)
+                if puntaje > mejor_puntaje:
+                    mejor_puntaje = puntaje
+                    mejores_mov = [movimiento] #se guarda con corchete para que guarde como una lista y poder usar append y random, la igual que recetear la lista 
+                #probando lo que dice la ia
+                elif puntaje == mejor_puntaje:
+                    mejores_mov.append(movimiento) # Empate, lo agregamos
+    else:
+        for movimiento in movimientos:
+            if movimineto_valido(movimiento, pos_raton):
+                pos_raton_sim = list(mover_ficha_sim(movimiento, pos_raton))
+                puntaje = minimax(pos_gato, pos_raton_sim, cant_turno - 1, profundidad - 1, True)
+                print(puntaje)
+                if puntaje < mejor_puntaje:
+                    mejor_puntaje = puntaje
+                    mejores_mov = [movimiento]
+                #probando lo que dice la ia
+                elif puntaje == mejor_puntaje:
+                    mejores_mov.append(movimiento) # Empate, lo agregamos
+    #probando lo que dice la ia
+    
+    if mejores_mov:
+        return random.choice(mejores_mov)#en el caso de que solo haya 1 elemento, no se dieron igualdades arriba,
+    #random.choice devuelve directamente la unica cosa que tiene dentro 
+
+tablero_de_juego = crear_tablero()
 print("Juego del Gato y Raton")
-crear_tablero()
-#Se usa list() para que el valor que retorna sea una lista y no tupla
-#hacer una funcion o en la misma de colocar personaje, que se encargue de que si estan muy cerca separe los personajes
-pos_gato = list(colocar_personaje(1))
-pos_raton = list(colocar_personaje(2))
-imprimir_tablero_estetico()
-#Para saber que va ser el humano
-elecc_humano = int(input("Desea ser:\n1 : Gato \n2 : Raton\nElección: "))
-#Turno_actual se va encargar de cambiar los turnos
-turno_actual = elecc_humano
-#Que pasa si piden que el comienzo del turno sea al azar, rand entre 1 o 2
+pos_gato = list(colocar_personaje("G",tablero_de_juego))
+pos_raton = list(colocar_personaje("R",tablero_de_juego))
+imprimir_tablero(tablero_de_juego)
+#Guarda la ficha y la hace que sea mayuscula
+modo_de_juego = int(input("Que modo de juego desea elegir:\n1 : Humano (humano sera siempre Gato) vs IA \n2 : IA vs IA\nElección: "))
+if modo_de_juego == 1:
+    ficha_jugador = "R"
+    turno_actual = ficha_jugador
+else:
+    ficha_jugador = ""
+    turno_actual = "G"
 
-
-#Hacer AI vs AI
 while True:
-    imprimir_tablero_estetico()
-    #Humano
-#Corroboramos que el turno sea del humano
-    if turno_actual == elecc_humano:
-        if elecc_humano == 1: titulo = "Gato"
-        else: titulo = "Raton"
-        print(f"Es el turno del {titulo}")
-#Corrobora que la jugada se hizo para cambiar el turno, y llama a la funcion que mueve la pieza
-        if fun_de_mov_human(elecc_humano):
-            cant_turno -= 1 #Se pone en los 2, pero se podria poner solo en uno para que dure mas el juego
-            cambiar_turno()
-        if corroborar_fin():#Corrobora si el juego termina
-            imprimir_tablero_estetico()
-            break
+    imprimir_tablero(tablero_de_juego)
+    if turno_actual == "G" and modo_de_juego == 2:
+        print("Truno del Gato")
     else:
-    #Maquina
-        if elecc_humano == 1: titulo = "Raton"
-        else: titulo = "Gato"
-        print(f"Es el turno del {titulo}")
-        #funcion de AI #Hacer la funcion de la computadora
-        fun_de_mov_ai(elecc_humano)
-        cant_turno -= 1 #Se pone en los 2, pero se podria poner solo en uno para que dure mas el juego
-        cambiar_turno()
-        if corroborar_fin():#Corrobora si el juego termina
-            imprimir_tablero_estetico()
-            break
-       
-    print(f"Faltan {cant_turno} para que el raton se escape")
+        print("Turno del Raton")
+#Jugada de Humano 
+    if turno_actual == ficha_jugador:
+        mov = fun_de_mov_human(ficha_jugador)
+        if ficha_jugador == "G":
+            if movimineto_valido(mov, pos_gato):
+                pos_gato = list(mover_ficha(mov, "G", pos_gato,tablero_de_juego))
+                cant_turno -= 1
+                turno_actual = cambiar_turno(turno_actual)
+                print(turno_actual)
+            else:
+                print("Ese movimiento no es valido")
+        else: 
+            if movimineto_valido(mov, pos_raton):
+                pos_raton = list(mover_ficha(mov, "R", pos_raton,tablero_de_juego))
+                cant_turno -= 1
+                turno_actual = cambiar_turno(turno_actual)
+                print(turno_actual)
+            else:
+                print("Ese movimiento no es valido")
+#Jugada de IA
+    else:
+        print("Turno de la IA")
+        #Se llama ala funcion que llama al minimax para la mejor jugada, aca se debe agregar para llamar al maximizador del gato 
+        #o el maximizador del raton, posiblemente dentro del if
+        mov_ai = fun_de_mov_ai(turno_actual,pos_gato,pos_raton)
+        #Solo hace la mejor jugada posible, que se devuelve en el minimax
+        if turno_actual == "G":
+            pos_gato = list(mover_ficha(mov_ai, "G", pos_gato, tablero_de_juego))
+        else:
+            pos_raton = list(mover_ficha(mov_ai, "R", pos_raton, tablero_de_juego))
+        cant_turno -= 1
+        turno_actual = cambiar_turno(turno_actual)
+#Corrobora fin de juego, se hace de esta manera para poder urilizar la funcion corroborar_fin en el minimax
+    if corroborar_fin(cant_turno, pos_gato, pos_raton):
+        if  pos_gato == pos_raton:
+            tablero_de_juego[pos_gato[0]][pos_gato[1]] = "G"
+            print("El GATO comio al raton")  
+        elif cant_turno == 0:
+             print("El RATON se escapo")    
+        imprimir_tablero(tablero_de_juego)
+        break
