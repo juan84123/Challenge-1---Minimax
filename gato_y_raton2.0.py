@@ -111,28 +111,55 @@ def corroborar_fin(cant_turno, pos_1,  pos_2):
 
 #Da valores para que el minimax decida que hacer, #####CORROBORAR###########
 def puntajes_minimax(cant_turno, pos_gato, pos_raton, ficha_ia):
-    manhatan_elevada = -(dist_manhatan(pos_gato, pos_raton)**2)
+    
+    dist_manhatan =  abs(pos_gato[0]-pos_raton[0]) + abs(pos_gato[1]-pos_raton[1])
 
-    if ficha_ia == "G":
-        if pos_gato == pos_raton:
-            return 10000
-        elif cant_turno == 0:
-            return -10000
-        else:
-            if ver_bordes(pos_raton): #ve si el raton esta cerca de bordes
-                return manhatan_elevada + 20
-            if pos_raton[0] == pos_gato[0] or pos_gato[1] == pos_raton[1]:#ver si la misma fila o columna
-                return manhatan_elevada + 10 
-                #Devuelve el valor negativo de la distancia para que al comparar el valor sea mas grande, por ejemplo si la distancia es 1 y 4, lo conveniente es 1 pero
-                #como el gato quiere el maxor valor usara 4
-        return  manhatan_elevada
-    else:
-        if pos_gato == pos_raton:
-            return -1000
-        if cant_turno == 0:
+    if pos_gato == pos_raton:
+        if ficha_ia == "G":
             return 1000
         else:
-            return dist_manhatan(pos_gato, pos_raton) 
+            return -1000
+    
+    if cant_turno == 0:
+        if ficha_ia == "R":
+            return 1000
+        else:
+            return -1000
+        
+         # -------- HEURÍSTICAS --------
+    # Penalización por estar en borde (malo para el ratón)
+    penalizacion_borde = 0
+    if pos_raton[0] == 0 or pos_raton[0] == tamano_x - 1:
+        penalizacion_borde += 3
+    if pos_raton[1] == 0 or pos_raton[1] == tamano_y - 1:
+        penalizacion_borde += 3
+
+    # Penalización por alineación directa (muy peligroso)
+    penalizacion_alineacion = 0
+    if pos_raton[0] == pos_gato[0] or pos_raton[1] == pos_gato[1]:
+        penalizacion_alineacion += 6
+
+    # Movilidad del ratón
+    movilidad = 0
+    for m in ["w", "s", "a", "d"]:
+        if movimineto_valido(m, pos_raton):
+            movilidad += 1
+
+    # -------- CÁLCULO FINAL --------
+
+    if ficha_ia == "G":
+        # El gato quiere:
+        # - Minimizar distancia
+        # - Que el ratón esté en bordes
+        # - Que tenga poca movilidad
+        return (-dist_manhatan * 3 - movilidad * 2 + penalizacion_borde + penalizacion_alineacion)
+    else:
+        # El ratón quiere:
+        # - Maximizar distancia
+        # - Tener movilidad
+        # - Evitar bordes
+        # - Evitar alineación
+       return (dist_manhatan * 3 + movilidad * 2 - penalizacion_borde - penalizacion_alineacion)
 
 #Cambia el turno
 def cambiar_turno(turno_actual):
@@ -142,34 +169,29 @@ def cambiar_turno(turno_actual):
         turno_actual = "G"
     return turno_actual
 
-#Calcula la Distancia de manhatan, para ver la distancia entre personajes y ver que movimiento se debe hacer
-def dist_manhatan(pos_gato,pos_raton):
-    dist_manh = abs(pos_gato[0]-pos_raton[0]) + abs(pos_gato[1]-pos_raton[1])
-    return dist_manh
-
 #Hace el minimax
-def minimax(pos_gato,pos_raton, cant_turno, profundidad, maximizador, ficha_ia):
-    
+def minimax(pos_gato, pos_raton, cant_turno, profundidad, maximizador, ficha_ia):
     movimientos = ["w","s","a","d"]
-
+    
     if profundidad == 0 or corroborar_fin(cant_turno, pos_gato, pos_raton):
         return puntajes_minimax(cant_turno, pos_gato, pos_raton, ficha_ia)
-    
+
     if maximizador:
-        maximo = -99999
+        maximo = -float('inf')
         for movimiento in movimientos:
             #Solo corrobora desbordamiento
             if movimineto_valido(movimiento, pos_gato):
                 pos_gato_sim = list(mover_ficha_sim(movimiento, pos_gato))
-                aux_max = minimax(pos_gato_sim, pos_raton, cant_turno - 1, profundidad - 1, False, ficha_ia)
+                #le paso la posible juagada para que me de un valor y asi comparar ese valor con las otras posibles jugadas
+                aux_max = minimax(pos_gato_sim, pos_raton, cant_turno - 1, profundidad - 1, False, ficha_ia) 
                 maximo = max(aux_max, maximo)
         return maximo
-    
     else:
-        minimo= 99999
+        minimo = float('inf')
         for movimiento in movimientos:
             if movimineto_valido(movimiento, pos_raton):
                 pos_raton_sim = list(mover_ficha_sim(movimiento, pos_raton))
+                #le paso la posible juagada para que me de un valor y asi comparar ese valor con las otras posibles jugadas
                 aux_min = minimax(pos_gato, pos_raton_sim, cant_turno - 1, profundidad - 1, True, ficha_ia)
                 minimo = min(aux_min, minimo)
         return minimo
@@ -181,25 +203,29 @@ def fun_de_mov_ai(turno_actual, pos_gato, pos_raton):
     profundidad = 6
 
     if turno_actual == "G":
-        mejor_puntaje = -9999999
+        mejor_puntaje = -float('inf')
+    else:
+        mejor_puntaje = float('inf')
+
+    if turno_actual == "G":
         for movimiento in movimientos:
             if movimineto_valido(movimiento, pos_gato):
-                pos_gato_sim = mover_ficha_sim (movimiento, pos_gato) 
+                pos_gato_sim = list(mover_ficha_sim(movimiento, pos_gato))
                 puntaje = minimax(pos_gato_sim, pos_raton, cant_turno - 1, profundidad - 1, False, turno_actual)
                 print(puntaje)
                 if puntaje > mejor_puntaje:
                     mejor_puntaje = puntaje
                     mejor_mov = movimiento
- #   else:
- #       mejor_puntaje = 999999
- #       for movimiento in movimientos:
- #           if movimineto_valido(movimiento, pos_raton):
- #               pos_raton_sim = mover_ficha_sim (movimiento, pos_raton) 
- #               puntaje = minimax(pos_gato, pos_raton_sim, cant_turno - 1, profundidad - 1, True, turno_actual)
- #               print(puntaje)
- #               if puntaje < mejor_puntaje:
- #                   mejor_puntaje = puntaje
- #                   mejor_mov = movimiento
+    else:
+        for movimiento in movimientos:
+            if movimineto_valido(movimiento, pos_raton):
+                pos_raton_sim = list(mover_ficha_sim(movimiento, pos_raton))
+                puntaje = minimax(pos_gato, pos_raton_sim, cant_turno - 1, profundidad - 1, True, turno_actual)
+                print(puntaje)
+                if puntaje < mejor_puntaje:
+                    mejor_puntaje = puntaje
+                    mejor_mov = movimiento
+    
     return mejor_mov
 
 tablero_de_juego = crear_tablero()
@@ -209,16 +235,13 @@ pos_raton = list(colocar_personaje("R",tablero_de_juego))
 imprimir_tablero(tablero_de_juego)
 #Guarda la ficha y la hace que sea mayuscula
 ficha_jugador = input("Elegir animal:\nG : Gato \nR : Raton\nElección: ").upper()
-
 turno_actual = ficha_jugador
-
 while True:
     imprimir_tablero(tablero_de_juego)
     if turno_actual == "G":
         print("Truno del Gato")
     else:
         print("Turno del Raton")
-
 #Jugada de Humano 
     if turno_actual == ficha_jugador:
         mov = fun_de_mov_human(ficha_jugador)
@@ -238,16 +261,12 @@ while True:
                 print(turno_actual)
             else:
                 print("Ese movimiento no es valido")
-
 #Jugada de IA
     else:
         print("Turno de la IA")
         #Se llama ala funcion que llama al minimax para la mejor jugada, aca se debe agregar para llamar al maximizador del gato 
         #o el maximizador del raton, posiblemente dentro del if
-
-        #Primero hacer bien minimax para el gato
         mov_ai = fun_de_mov_ai(turno_actual,pos_gato,pos_raton)
-
         #Solo hace la mejor jugada posible, que se devuelve en el minimax
         if turno_actual == "G":
             pos_gato = list(mover_ficha(mov_ai, "G", pos_gato, tablero_de_juego))
@@ -255,8 +274,6 @@ while True:
             pos_raton = list(mover_ficha(mov_ai, "R", pos_raton, tablero_de_juego))
         cant_turno -= 1
         turno_actual = cambiar_turno(turno_actual)
-
-
 #Corrobora fin de juego, se hace de esta manera para poder urilizar la funcion corroborar_fin en el minimax
     if corroborar_fin(cant_turno, pos_gato, pos_raton):
         if  pos_gato == pos_raton:
