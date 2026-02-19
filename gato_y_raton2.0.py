@@ -192,6 +192,7 @@ imprimir_tablero(tablero_de_juego)
 #Guarda la ficha y la hace que sea mayuscula
 ficha_jugador = input("Elegir animal:\nG : Gato \nR : Raton\nElección: ").upper()
 turno_actual = ficha_jugador
+
 while True:
     imprimir_tablero(tablero_de_juego)
     if turno_actual == "G":
