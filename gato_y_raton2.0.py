@@ -111,56 +111,12 @@ def corroborar_fin(cant_turno, pos_1,  pos_2):
 
 #Da valores para que el minimax decida que hacer, #####CORROBORAR###########
 def puntajes_minimax(cant_turno, pos_gato, pos_raton, ficha_ia):
-    
     dist_manhatan =  abs(pos_gato[0]-pos_raton[0]) + abs(pos_gato[1]-pos_raton[1])
-
     if pos_gato == pos_raton:
-        if ficha_ia == "G":
-            return 1000
-        else:
-            return -1000
-    
-    if cant_turno == 0:
-        if ficha_ia == "R":
-            return 1000
-        else:
-            return -1000
-        
-         # -------- HEURÍSTICAS --------
-    # Penalización por estar en borde (malo para el ratón)
-    penalizacion_borde = 0
-    if pos_raton[0] == 0 or pos_raton[0] == tamano_x - 1:
-        penalizacion_borde += 3
-    if pos_raton[1] == 0 or pos_raton[1] == tamano_y - 1:
-        penalizacion_borde += 3
-
-    # Penalización por alineación directa (muy peligroso)
-    penalizacion_alineacion = 0
-    if pos_raton[0] == pos_gato[0] or pos_raton[1] == pos_gato[1]:
-        penalizacion_alineacion += 6
-
-    # Movilidad del ratón
-    movilidad = 0
-    for m in ["w", "s", "a", "d"]:
-        if movimineto_valido(m, pos_raton):
-            movilidad += 1
-
-    # -------- CÁLCULO FINAL --------
-
-    if ficha_ia == "G":
-        # El gato quiere:
-        # - Minimizar distancia
-        # - Que el ratón esté en bordes
-        # - Que tenga poca movilidad
-        return (-dist_manhatan * 3 - movilidad * 2 + penalizacion_borde + penalizacion_alineacion)
+        return float('inf')
     else:
-        # El ratón quiere:
-        # - Maximizar distancia
-        # - Tener movilidad
-        # - Evitar bordes
-        # - Evitar alineación
-       return (dist_manhatan * 3 + movilidad * 2 - penalizacion_borde - penalizacion_alineacion)
-
+        return -dist_manhatan #Es heurisitica, porque le estas diciendo para donde ir, de manera a que termine el juego
+    
 #Cambia el turno
 def cambiar_turno(turno_actual):
     if turno_actual == "G":
@@ -279,7 +235,7 @@ while True:
         if  pos_gato == pos_raton:
             tablero_de_juego[pos_gato[0]][pos_gato[1]] = "G"
             print("El GATO comio al raton")  
-        if cant_turno == 0:
+        elif cant_turno == 0:
              print("El RATON se escapo")    
         imprimir_tablero(tablero_de_juego)
         break
