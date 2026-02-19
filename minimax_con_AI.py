@@ -157,6 +157,8 @@ def minimax(pos_gato, pos_raton, cant_turno, profundidad, maximizador):
         return minimo
 
 #La juagada de la IA 
+#En casos particulares el raton se suicida, por la eleccion al azar si los resoltados de las posibles jugadas
+#son iguales
 def fun_de_mov_ai(turno_actual, pos_gato, pos_raton):
     movimientos = ["w","s","a","d"]
     mejores_mov = []
@@ -175,10 +177,13 @@ def fun_de_mov_ai(turno_actual, pos_gato, pos_raton):
                 print(puntaje)
                 if puntaje > mejor_puntaje:
                     mejor_puntaje = puntaje
-                    mejores_mov = [movimiento] #se guarda con corchete para que guarde como una lista y poder usar append y random, la igual que recetear la lista 
+                    mejores_mov = [movimiento] #se guarda con corchete para que guarde como una lista y 
+                    #poder usar append y random, la igual que recetear la lista 
+                
                 #probando lo que dice la ia
                 elif puntaje == mejor_puntaje:
-                    mejores_mov.append(movimiento) # Empate, lo agregamos
+                    mejores_mov.append(movimiento)#Si los valores de las jugadas son iguales se 
+                    #agregan a una lista
     else:
         for movimiento in movimientos:
             if movimineto_valido(movimiento, pos_raton):
@@ -187,12 +192,15 @@ def fun_de_mov_ai(turno_actual, pos_gato, pos_raton):
                 print(puntaje)
                 if puntaje < mejor_puntaje:
                     mejor_puntaje = puntaje
-                    mejores_mov = [movimiento]
+                    mejores_mov = [movimiento]#se guarda con corchete para que guarde como una lista y 
+                    #poder usar append y random, la igual que recetear la lista 
+                
                 #probando lo que dice la ia
                 elif puntaje == mejor_puntaje:
-                    mejores_mov.append(movimiento) # Empate, lo agregamos
+                    mejores_mov.append(movimiento)#Si los valores de las jugadas son iguales se 
+                    #agregan a una lista
+
     #probando lo que dice la ia
-    
     if mejores_mov:
         return random.choice(mejores_mov)#en el caso de que solo haya 1 elemento, no se dieron igualdades arriba,
     #random.choice devuelve directamente la unica cosa que tiene dentro 
@@ -202,10 +210,11 @@ print("Juego del Gato y Raton")
 pos_gato = list(colocar_personaje("G",tablero_de_juego))
 pos_raton = list(colocar_personaje("R",tablero_de_juego))
 imprimir_tablero(tablero_de_juego)
-#Guarda la ficha y la hace que sea mayuscula
+#Selecciona el modo de juego
 modo_de_juego = int(input("Que modo de juego desea elegir:\n1 : Humano (humano sera siempre Gato) vs IA \n2 : IA vs IA\nElección: "))
+#Si se elige que el humano comience, siempre sera el Gato
 if modo_de_juego == 1:
-    ficha_jugador = "R"
+    ficha_jugador = "G"
     turno_actual = ficha_jugador
 else:
     ficha_jugador = ""
@@ -213,12 +222,12 @@ else:
 
 while True:
     imprimir_tablero(tablero_de_juego)
-    if turno_actual == "G" and modo_de_juego == 2:
+    if turno_actual == "G":
         print("Truno del Gato")
     else:
         print("Turno del Raton")
 #Jugada de Humano 
-    if turno_actual == ficha_jugador:
+    if turno_actual == ficha_jugador and modo_de_juego == 1:
         mov = fun_de_mov_human(ficha_jugador)
         if ficha_jugador == "G":
             if movimineto_valido(mov, pos_gato):
@@ -238,7 +247,6 @@ while True:
                 print("Ese movimiento no es valido")
 #Jugada de IA
     else:
-        print("Turno de la IA")
         #Se llama ala funcion que llama al minimax para la mejor jugada, aca se debe agregar para llamar al maximizador del gato 
         #o el maximizador del raton, posiblemente dentro del if
         mov_ai = fun_de_mov_ai(turno_actual,pos_gato,pos_raton)
