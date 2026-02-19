@@ -1,3 +1,4 @@
+#CODIGO QUE FUNCIONA
 import random
 
 tamano_x = 5            #Tamano i de la matriz
