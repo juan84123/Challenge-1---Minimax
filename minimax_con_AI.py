@@ -1,12 +1,8 @@
 #CODIGO QUE FUNCIONA
-
 import random
-
 tamano_x = 5            #Tamano i de la matriz
 tamano_y = 5            #Tamano j de la matriz
 cant_turno = 10         #Cantidad de turnos
-
-#entender bien random.choice y random.randint
 
 #Se encarga de crear el tablero y llenarlo de "." y retornarlo
 def crear_tablero():
