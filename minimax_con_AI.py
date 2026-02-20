@@ -224,14 +224,6 @@ while True:
                 print(turno_actual)
             else:
                 print("Ese movimiento no es valido")
-        else: 
-            if movimineto_valido(mov, pos_raton):
-                pos_raton = list(mover_ficha(mov, "R", pos_raton,tablero_de_juego))
-                cant_turno -= 1
-                turno_actual = cambiar_turno(turno_actual)
-                print(turno_actual)
-            else:
-                print("Ese movimiento no es valido")
 #Jugada de IA
     else:
         #Se llama a la funcion que llama al minimax para la mejor jugada
