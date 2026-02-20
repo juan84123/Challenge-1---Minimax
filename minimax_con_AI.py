@@ -102,8 +102,8 @@ def corroborar_fin(cant_turno, pos_1,  pos_2):
     else:
         return False
 
-#Da valores para que el minimax decida que hacer, #####CORROBORAR###########
-def puntajes_minimax(cant_turno, pos_gato, pos_raton, profundidad):
+#Da valores para que el minimax decida que hacer
+def puntajes_minimax(pos_gato, pos_raton, profundidad):
     dist_manhatan =  abs(pos_gato[0]-pos_raton[0]) + abs(pos_gato[1]-pos_raton[1])
     
     if pos_gato == pos_raton:
@@ -124,7 +124,7 @@ def minimax(pos_gato, pos_raton, cant_turno, profundidad, maximizador):
     movimientos = ["w","s","a","d"]
     
     if profundidad == 0 or corroborar_fin(cant_turno, pos_gato, pos_raton):
-        return puntajes_minimax(cant_turno, pos_gato, pos_raton, profundidad)
+        return puntajes_minimax(pos_gato, pos_raton, profundidad)
 
     if maximizador:
         maximo = -float('inf')
