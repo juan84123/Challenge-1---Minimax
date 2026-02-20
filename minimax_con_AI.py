@@ -160,7 +160,6 @@ def fun_de_mov_ai(turno_actual, pos_gato, pos_raton):
             if movimineto_valido(movimiento, pos_gato):
                 pos_gato_sim = list(mover_ficha_sim(movimiento, pos_gato))
                 puntaje = minimax(pos_gato_sim, pos_raton, cant_turno - 1, profundidad - 1, False)
-                print(puntaje)
                 if puntaje > mejor_puntaje:
                     mejor_puntaje = puntaje
                     mejores_mov = [movimiento] #se guarda con corchete para que guarde como una lista y 
@@ -174,7 +173,6 @@ def fun_de_mov_ai(turno_actual, pos_gato, pos_raton):
             if movimineto_valido(movimiento, pos_raton):
                 pos_raton_sim = list(mover_ficha_sim(movimiento, pos_raton))
                 puntaje = minimax(pos_gato, pos_raton_sim, cant_turno - 1, profundidad - 1, True)
-                print(puntaje)
                 if puntaje < mejor_puntaje:
                     mejor_puntaje = puntaje
                     mejores_mov = [movimiento]#se guarda con corchete para que guarde como una lista y 
