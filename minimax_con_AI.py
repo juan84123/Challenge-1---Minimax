@@ -4,7 +4,7 @@ import random
 
 tamano_x = 5            #Tamano i de la matriz
 tamano_y = 5            #Tamano j de la matriz
-cant_turno = 70         #Cantidad de turnos
+cant_turno = 10         #Cantidad de turnos
 
 #entender bien random.choice y random.randint
 
@@ -28,7 +28,7 @@ def imprimir_tablero(tablero_de_juego):
 def colocar_personaje(personaje, tablero_de_juego):
     while True: #si el valor en la matriz con los valores random son iguales
         i = random.randint(0, tamano_x - 1)
-        j = random.randint(0, tamano_y - 1)
+        j = random.randint(0, tamano_y - 1) #randitn es la funcion del modulo random 
         if tablero_de_juego[i][j] == ".":
             tablero_de_juego[i][j] = personaje
             return i,j   #retorna lo las posiciones
@@ -105,6 +105,7 @@ def corroborar_fin(cant_turno, pos_1,  pos_2):
 #Da valores para que el minimax decida que hacer, #####CORROBORAR###########
 def puntajes_minimax(cant_turno, pos_gato, pos_raton, profundidad):
     dist_manhatan =  abs(pos_gato[0]-pos_raton[0]) + abs(pos_gato[1]-pos_raton[1])
+    
     if pos_gato == pos_raton:
         return float('inf') - (6 - profundidad) #hace que funcione mejor, castiga ligeramente las victorias lejanas
     else:
