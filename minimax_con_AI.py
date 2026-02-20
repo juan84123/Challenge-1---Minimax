@@ -14,16 +14,15 @@ def crear_tablero():
     for fila in range(tamano_x):
        fila = [] # Se crea una lista (fila) vacia
        for columna in range(tamano_y):  
-           fila.append(".") # Se meten los 0 en la fila 1 por 1
+           fila.append(".") # Se meten los "." en la fila 1 por 1
        tablero.append(fila) # Se agrega la fila a la matriz
     return tablero
 
 #Imprime el tablero de manera estetica
 def imprimir_tablero(tablero_de_juego):
     for i in tablero_de_juego:
-        for j in i:
-            print(" ", j, end="") #imprime de manera estetica la tabla, end sirve para que las lineas se impriman de manera horizontal
-        print(" ")
+        fila = " ".join(i)
+        print(fila)
 
 #Se encarga de poner al gato y al rato en el tablero al azar 
 def colocar_personaje(personaje, tablero_de_juego):
@@ -58,16 +57,6 @@ def movimineto_valido(mov, pos):
         return (j - 1) >= 0 #pos[1]-1 <= 0, para que no desborde por la izquierda retorna TRUE o False 
     else:
         return False      
-
-#Corrobora los bordes del raton, para que el gato quiera acorralar
-def ver_bordes(pos_raton):
-    i = pos_raton[0]
-    j = pos_raton[1]
-
-    if i == 0 or i == tamano_x - 1 or j == tamano_y - 1 or j ==  0:
-        return True #pos[0]-1 >= 0, se toma este valor para corroborar que no desborde por arriba, retorna TRUE o False 
-    else:
-        return False  
 
 #Se encarga de mover la ficha a su nueva posicion, y poner "." en el lugar donde estaba
 def mover_ficha(mov, ficha, pos,tablero_de_juego):
@@ -178,9 +167,8 @@ def fun_de_mov_ai(turno_actual, pos_gato, pos_raton):
                 if puntaje > mejor_puntaje:
                     mejor_puntaje = puntaje
                     mejores_mov = [movimiento] #se guarda con corchete para que guarde como una lista y 
-                    #poder usar append y random, la igual que recetear la lista 
+                    #poder usar append y random, al igual que recetear la lista 
                 
-                #probando lo que dice la ia
                 elif puntaje == mejor_puntaje:
                     mejores_mov.append(movimiento)#Si los valores de las jugadas son iguales se 
                     #agregan a una lista
@@ -193,14 +181,12 @@ def fun_de_mov_ai(turno_actual, pos_gato, pos_raton):
                 if puntaje < mejor_puntaje:
                     mejor_puntaje = puntaje
                     mejores_mov = [movimiento]#se guarda con corchete para que guarde como una lista y 
-                    #poder usar append y random, la igual que recetear la lista 
+                    #poder usar append y random, al igual que recetear la lista 
                 
-                #probando lo que dice la ia
                 elif puntaje == mejor_puntaje:
                     mejores_mov.append(movimiento)#Si los valores de las jugadas son iguales se 
                     #agregan a una lista
 
-    #probando lo que dice la ia
     if mejores_mov:
         return random.choice(mejores_mov)#en el caso de que solo haya 1 elemento, no se dieron igualdades arriba,
     #random.choice devuelve directamente la unica cosa que tiene dentro 
@@ -247,10 +233,9 @@ while True:
                 print("Ese movimiento no es valido")
 #Jugada de IA
     else:
-        #Se llama ala funcion que llama al minimax para la mejor jugada, aca se debe agregar para llamar al maximizador del gato 
-        #o el maximizador del raton, posiblemente dentro del if
+        #Se llama a la funcion que llama al minimax para la mejor jugada
         mov_ai = fun_de_mov_ai(turno_actual,pos_gato,pos_raton)
-        #Solo hace la mejor jugada posible, que se devuelve en el minimax
+        #Solo hace la mejor jugada posible, que se devuelve en el fun_de_mov_ai
         if turno_actual == "G":
             pos_gato = list(mover_ficha(mov_ai, "G", pos_gato, tablero_de_juego))
         else:
